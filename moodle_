@@ -32,11 +32,30 @@ else {
 // check for 'config' passed as arg
 // if so, we need to send the setup info
 if (!empty($args[1]) and ($args[1]=='config')) {
+    echo "multigraph users\n";
     echo "graph_title $database users access and logins\n";
-    echo "graph_vlabel users\n";
-    echo "users.label users\n";
-    echo "graph_vlabel logins\n";
-    echo "logins.label logins\n";
+    echo "graph_vlabel count\n";
+    echo "users.label current users\n";
+    echo "logins.label login rate\n";
+
+    echo "multigraph logs\n";
+    echo "graph_title $database log activity\n";
+    echo "graph_vlabel log rate\n";
+    echo "logentry.label logs written\n";
+
+    echo "multigraph courses\n";
+    echo "graph_title $database courses\n";
+    echo "graph_vlabel courses\n";
+    echo "numcourses.label number of courses\n";
+    echo "numvisible.label number of visible courses\n";
+
+    echo "multigraph activities\n";
+    echo "graph_title $database activities\n";
+    echo "graph_vlabel activity count\n";
+    echo "turnitinsubmission.label turnitin submissions\n";
+    echo "assignsubmission.label assignment submissions\n";
+    echo "quizattempts.label quiz attempts\n";
+    echo "forumposts.label forum posts\n";
     exit( 0 );
 }
 
@@ -48,6 +67,7 @@ $timefrom = time() - 5*60;
 $sql = "SELECT count(id) AS users FROM {$prefix}user WHERE lastaccess > $timefrom";
 $res = $mysqli->query( $sql );
 $stuff = $res->fetch_assoc();
+echo "multigraph users\n";
 echo "users.value " . $stuff['users'] . "\n";
 
 // get users who logged in the previous 5 mins
@@ -55,5 +75,50 @@ $sql = "SELECT count(id) AS logins from {$prefix}user WHERE currentlogin > $time
 $res = $mysqli->query( $sql );
 $stuff = $res->fetch_assoc();
 echo "logins.value " . $stuff['logins'] . "\n";
+
+// get log activity
+$sql = "SELECT count(id) AS logentry from {$prefix}log WHERE time > $timefrom";
+$res = $mysqli->query( $sql );
+$stuff = $res->fetch_assoc();
+echo "multigraph logs\n";
+echo "logentry.value " . $stuff['logentry'] . "\n";
+
+// courses
+$sql = "SELECT count(id) AS numcourses from {$prefix}course";
+$res = $mysqli->query( $sql );
+$stuff = $res->fetch_assoc();
+echo "multigraph courses\n";
+echo "numcourses.value " . $stuff['numcourses'] . "\n";
+
+// visible courses
+$sql = "SELECT count(id) AS numvisible from {$prefix}course WHERE visible=1";
+$res = $mysqli->query( $sql );
+$stuff = $res->fetch_assoc();
+echo "numvisible.value " . $stuff['numvisible'] . "\n";
+
+// turnition submissions
+$sql = "SELECT count(id) AS turnitinsubmission from {$prefix}turnitintool_submissions where submission_modified > $timefrom";
+$res = $mysqli->query( $sql );
+$stuff = $res->fetch_assoc();
+echo "multigraph activities\n";
+echo "turnitinsubmission.value " . $stuff['turnitinsubmission'] . "\n";
+
+// assignment submissions
+$sql = "SELECT count(id) AS assignsubmission from {$prefix}assign_submission where timemodified > $timefrom";
+$res = $mysqli->query( $sql );
+$stuff = $res->fetch_assoc();
+echo "assignsubmission.value " . $stuff['assignsubmission'] . "\n";
+
+// quiz attempts
+$sql = "SELECT count(id) AS quizattempts from {$prefix}quiz_attempts where timemodified > $timefrom";
+$res = $mysqli->query( $sql );
+$stuff = $res->fetch_assoc();
+echo "quizattempts.value " . $stuff['quizattempts'] . "\n";
+
+// forum posts
+$sql = "SELECT count(id) AS forumposts from {$prefix}forum_posts where modified > $timefrom";
+$res = $mysqli->query( $sql );
+$stuff = $res->fetch_assoc();
+echo "forumposts.value " . $stuff['forumposts'] . "\n";
 
 exit( 0 );
