@@ -1,0 +1,59 @@
+#!/usr/bin/php
+<?php
+
+// get environment
+$hostname = getenv('hostname');
+$user = getenv('user');
+$password = getenv('password');
+
+// for testing
+$hostname = 'moodle2db.gla.ac.uk';
+$user = 'learnadmin';
+$password = 'lrn@29';
+
+// moodle table prefix
+$prefix = 'mdl_';
+
+// get args
+$args = $argv;
+
+// get name of database from filename
+// ( moodle_databasename )
+$command = $args[0];
+$parts = explode('_', $command);
+if (!empty($parts[1])) {
+    $database = $parts[1];
+}
+else {
+    echo "Not linked correctly. See docs";
+    exit( 2 );
+}
+
+// check for 'config' passed as arg
+// if so, we need to send the setup info
+if (!empty($args[1]) and ($args[1]=='config')) {
+    echo "graph_title $database users access and logins\n";
+    echo "graph_vlabel users\n";
+    echo "users.label users\n";
+    echo "graph_vlabel logins\n";
+    echo "logins.label logins\n";
+    exit( 0 );
+}
+
+// connect to database
+$mysqli = new mysqli($hostname, $user, $password, $database);
+
+// get users online in previous 5 mins
+$timefrom = time() - 5*60;
+$sql = "SELECT count(id) AS users FROM {$prefix}user WHERE lastaccess > $timefrom";
+$res = $mysqli->query( $sql );
+$stuff = $res->fetch_assoc();
+echo "users.value " . $stuff['users'] . "\n";
+
+// get users who logged in the previous 5 mins
+$sql = "SELECT count(id) AS logins from {$prefix}user WHERE currentlogin > $timefrom";
+$res = $mysqli->query( $sql );
+$stuff = $res->fetch_assoc();
+echo "logins.value " . $stuff['logins'] . "\n";
+
+exit( 0 );
