@@ -1,6 +1,16 @@
 #!/usr/bin/php
 <?php
 
+/* Any copyright is dedicated to the Public Domain.
+   http://creativecommons.org/publicdomain/zero/1.0/ */
+
+// Author: Howard Miller, 2012
+// howardsmiller@gmail.com
+
+// If using this code breaks your site, ends your marriage, kills
+// your dog or anything else you think you might be able sue me for...
+// you used it at your own risk. Ok?
+
 // get environment
 $hostname = getenv('hostname');
 $user = getenv('user');
