@@ -17,11 +17,6 @@ $user = getenv('user');
 $password = getenv('password');
 $turnitin = getenv('turnitin');
 
-// for testing
-//$hostname = 'moodle2db.gla.ac.uk';
-//$user = 'learnadmin';
-//$password = 'lrn@29';
-
 // moodle table prefix
 $prefix = 'mdl_';
 
