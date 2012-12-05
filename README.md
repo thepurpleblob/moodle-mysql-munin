@@ -45,6 +45,8 @@ In your munin-node plugins configuration file (on Ubuntu this is
 the database name is extracted from the symlink name (see above). If you
 don't use turnitin set that to 0.
 
+'''Restart munin-node''' (see local documentation)
+
 testing
 =======
 
