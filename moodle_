@@ -5,11 +5,12 @@
 $hostname = getenv('hostname');
 $user = getenv('user');
 $password = getenv('password');
+$turnitin = getenv('turnitin');
 
 // for testing
-$hostname = 'moodle2db.gla.ac.uk';
-$user = 'learnadmin';
-$password = 'lrn@29';
+//$hostname = 'moodle2db.gla.ac.uk';
+//$user = 'learnadmin';
+//$password = 'lrn@29';
 
 // moodle table prefix
 $prefix = 'mdl_';
@@ -52,7 +53,9 @@ if (!empty($args[1]) and ($args[1]=='config')) {
     echo "multigraph activities\n";
     echo "graph_title $database activities\n";
     echo "graph_vlabel activity count\n";
-    echo "turnitinsubmission.label turnitin submissions\n";
+    if (!empty($turnitin)) {
+        echo "turnitinsubmission.label turnitin submissions\n";
+    }
     echo "assignsubmission.label assignment submissions\n";
     echo "quizattempts.label quiz attempts\n";
     echo "forumposts.label forum posts\n";
@@ -96,12 +99,15 @@ $res = $mysqli->query( $sql );
 $stuff = $res->fetch_assoc();
 echo "numvisible.value " . $stuff['numvisible'] . "\n";
 
-// turnition submissions
-$sql = "SELECT count(id) AS turnitinsubmission from {$prefix}turnitintool_submissions where submission_modified > $timefrom";
-$res = $mysqli->query( $sql );
-$stuff = $res->fetch_assoc();
 echo "multigraph activities\n";
-echo "turnitinsubmission.value " . $stuff['turnitinsubmission'] . "\n";
+
+// turnition submissions
+if (!empty($turnitin)) {
+    $sql = "SELECT count(id) AS turnitinsubmission from {$prefix}turnitintool_submissions where submission_modified > $timefrom";
+    $res = $mysqli->query( $sql );
+    $stuff = $res->fetch_assoc();
+    echo "turnitinsubmission.value " . $stuff['turnitinsubmission'] . "\n";
+}
 
 // assignment submissions
 $sql = "SELECT count(id) AS assignsubmission from {$prefix}assign_submission where timemodified > $timefrom";
